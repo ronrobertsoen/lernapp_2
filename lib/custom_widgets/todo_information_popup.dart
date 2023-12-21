@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class TodoInformationPopup extends StatefulWidget {
-  final TextEditingController descriptionController;
   final TextEditingController titleController;
+  final TextEditingController descriptionController;
+  final TextEditingController dateController; // Neuer Controller für das Datum
 
-  const TodoInformationPopup(
-      {Key? key,
-      required this.titleController,
-      required this.descriptionController})
-      : super(key: key);
+  const TodoInformationPopup({
+    Key? key,
+    required this.titleController,
+    required this.descriptionController,
+    required this.dateController, // Neuer Parameter für den Datum-Controller
+  }) : super(key: key);
 
   @override
   State<TodoInformationPopup> createState() => _TodoInformationPopupState();
@@ -69,13 +71,11 @@ class _TodoInformationPopupState extends State<TodoInformationPopup> {
             const SizedBox(
               height: 20,
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: TextField(
-                controller: widget.descriptionController,
+                controller: widget
+                    .dateController, // Verwenden Sie den neuen Controller hier
                 decoration: const InputDecoration(
                   labelStyle: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold),
@@ -85,9 +85,12 @@ class _TodoInformationPopupState extends State<TodoInformationPopup> {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 10,
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  primary: const Color.fromARGB(255, 3, 2, 2),
+                  backgroundColor: Color.fromARGB(255, 255, 255, 255),
                   textStyle: const TextStyle(fontWeight: FontWeight.bold)),
               child: const Text("Hinzufügen"),
               onPressed: () => Navigator.pop(context, false),

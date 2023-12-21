@@ -13,38 +13,47 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController dateController =
+      TextEditingController(); // Neuer Controller für das Datum
 
   List<String> dayDependentTodos = [];
-
-  List<String> todoInformation = [
-    "MON,TEST1,TEST1",
-  ];
-
+  List<String> todoInformation = ["MON,TEST1,TEST1"];
   String weekday = "";
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    dateController.dispose(); // Entsorgen des Controllers
+    super.dispose();
+  }
+
   void showInSnackBar(String value) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
         content: Text(
-      value,
-      style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 20, color: Colors.redAccent),
-    )));
+          value,
+          style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.redAccent),
+        ),
+      ),
+    );
   }
 
   void changeWeekday(String newDay) {
     setState(() {
       weekday = newDay;
     });
-    print("changed, $weekday");
-
     updateList();
   }
 
   void updateList() {
     dayDependentTodos.clear();
-    for (int i = 0; i < todoInformation.length; i++) {
-      if (todoInformation[i].split(",")[0] == weekday) {
-        dayDependentTodos.add(todoInformation[i]);
+    for (var todoInfo in todoInformation) {
+      if (todoInfo.split(",")[0] == weekday) {
+        dayDependentTodos.add(todoInfo);
       }
     }
   }
@@ -61,27 +70,21 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          const SizedBox(
-            height: 15,
-          ),
-          HorizontalDayList(
-            dayUpdateFunction: changeWeekday,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 15),
+          HorizontalDayList(dayUpdateFunction: changeWeekday),
+          const SizedBox(height: 20),
           Expanded(
             child: Container(
               width: double.infinity,
               decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
-                  boxShadow: [BoxShadow(blurRadius: 10.0)]),
-              child: TodoGridView(
-                todoList: dayDependentTodos,
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+                boxShadow: [BoxShadow(blurRadius: 10.0)],
               ),
+              child: TodoGridView(todoList: dayDependentTodos),
             ),
           ),
         ],
@@ -89,16 +92,18 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
-              context: context,
-              builder: (context) {
-                return TodoInformationPopup(
-                  titleController: titleController,
-                  descriptionController: descriptionController,
-                );
-              }).then((value) {
+            context: context,
+            builder: (context) {
+              return TodoInformationPopup(
+                titleController: titleController,
+                descriptionController: descriptionController,
+                dateController: dateController, // Übergeben des Controllers
+              );
+            },
+          ).then((value) {
             setState(() {
-              if (descriptionController.text == "" ||
-                  titleController.text == "") {
+              if (descriptionController.text.isEmpty ||
+                  titleController.text.isEmpty) {
                 showInSnackBar("Fach oder Beschreibung darf nicht leer sein!");
               } else {
                 todoInformation.add(
@@ -112,12 +117,10 @@ class _HomePageState extends State<HomePage> {
         },
         splashColor: const Color.fromARGB(255, 158, 158, 158),
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15))),
-        backgroundColor: const Color.fromARGB(255, 158, 158, 158),
-        child: const Icon(
-          Icons.add,
-          size: 50,
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
+        backgroundColor: const Color.fromARGB(255, 158, 158, 158),
+        child: const Icon(Icons.add, size: 50),
       ),
     );
   }
