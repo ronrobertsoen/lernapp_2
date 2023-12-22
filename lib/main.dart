@@ -5,6 +5,7 @@ void main() {
   runApp(const TodoApp());
 }
 
+//Das ist die Hauptklasse
 class TodoApp extends StatelessWidget {
   const TodoApp({Key? key}) : super(key: key);
 
