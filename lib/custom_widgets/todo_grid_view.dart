@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_try/custom_widgets/todo_tile.dart';
 
+// ignore: must_be_immutable
 class TodoGridView extends StatefulWidget {
   final List<String> todoList;
   const TodoGridView({Key? key, required this.todoList}) : super(key: key);

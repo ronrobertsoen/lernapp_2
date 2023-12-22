@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TodoInformationPopup extends StatefulWidget {
-  // Widget Klasse, die Popup verwaltet
-  final TextEditingController descriptionController;
   final TextEditingController titleController;
-  final TextEditingController dateController; // Controller = Eingabefelder
+  final TextEditingController descriptionController;
+  final TextEditingController dateController; // Neuer Controller für das Datum
 
-  const TodoInformationPopup(
-      {Key? key,
-      required this.titleController,
-      required this.descriptionController,
-      required this.dateController})
-      : super(key: key);
+  const TodoInformationPopup({
+    Key? key,
+    required this.titleController,
+    required this.descriptionController,
+    required this.dateController, // Neuer Parameter für den Datum-Controller
+  }) : super(key: key);
 
   @override
   _TodoInformationPopupState createState() => _TodoInformationPopupState();
@@ -79,32 +78,19 @@ class _TodoInformationPopupState extends State<TodoInformationPopup> {
             const SizedBox(
               height: 20,
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10),
-              child: GestureDetector(
-                onTap: () async {
-                  selectedDate = await showDatePicker(
-                    initialDate: DateTime.now(),
-                    context: context,
-                    firstDate: DateTime(2023),
-                    lastDate: DateTime(2100),
-                  );
-                  setState(() {});
-                },
-                child: Text(
-                  selectedDate != null
-                      ? DateFormat('dd-MM-yyyy').format(selectedDate!)
-                      : 'Datum auswählen',
-                  style: const TextStyle(
+              child: TextField(
+                controller: widget
+                    .dateController, // Verwenden Sie den neuen Controller hier
+                decoration: const InputDecoration(
+                  labelStyle: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(

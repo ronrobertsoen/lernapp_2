@@ -75,7 +75,6 @@ class _HomePageState extends State<HomePage> {
         children: [
           const SizedBox(height: 15),
           HorizontalDayList(dayUpdateFunction: changeWeekday),
-          HorizontalDateList(dayUpdateFunction: changeWeekday),
           const SizedBox(height: 20),
           Expanded(
             child: Container(
