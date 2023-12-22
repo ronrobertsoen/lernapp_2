@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
-class HorizontalDayList extends StatefulWidget {
+class HorizontalDateList extends StatefulWidget {
   final Function dayUpdateFunction;
 
-  const HorizontalDayList({Key? key, required this.dayUpdateFunction})
+  const HorizontalDateList({Key? key, required this.dayUpdateFunction})
       : super(key: key);
 
   @override
-  State<HorizontalDayList> createState() => _HorizontalDayListState();
+  State<HorizontalDateList> createState() => _HorizontalDateListState();
 }
 
-class _HorizontalDayListState extends State<HorizontalDayList> {
+class _HorizontalDateListState extends State<HorizontalDateList> {
   //Boxen oben, mit Wochentagen drin
-  List<String> weekdays = ["MON", "DI", "MI", "DO", "FR", "SA", "SO"];
+  List<String> weekdays = [
+    "18.12",
+    "19.12",
+    "20.12",
+    "21.12",
+    "22.12",
+    "23.12",
+    "24.12"
+  ];
 
   Color activeCardColor = Colors.white;
   Color inactiveCardColor = Colors.black26;
@@ -34,6 +42,7 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
   late DateTime date;
 
   void updateDayColor(int index) {
+    // wird der aktuelle Wochentag berechnet
     setState(() {
       for (int i = 0; i < cardColorList.length; i++) {
         cardColorList[i][0] = inactiveCardColor;
@@ -57,11 +66,11 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
     });
   }
 
-  @override
+  @override // definiert Widget, für die horizontale List von Weekdays
   Widget build(BuildContext context) {
-    // definiert Widget, für die horizontale List von Weekdays
     return SizedBox(
-      height: 50, // Gesamtgrösse des Widgets
+      // Gesamtgrösse des Widgets
+      height: 50,
       width: double.infinity,
       child: ListView.builder(
         // jedes Element ein Weekday
@@ -76,7 +85,7 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
             },
             child: Container(
               // Aussehen der Karte
-              margin: const EdgeInsets.only(left: 5, right: 5),
+              margin: const EdgeInsets.only(left: 5, right: 5, top: 5),
               height: 70,
               width: 50,
               decoration: BoxDecoration(
@@ -86,7 +95,8 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
               child: Center(
                 // Text in Container (Kinderinhalt) wird zentriert
                 child: Text(
-                  weekdays[index], // Schriftgrösse & Art etc.
+                  // Schriftgrösse & Art etc.
+                  weekdays[index],
                   style: TextStyle(
                       fontSize: 18,
                       color: cardColorList[index][1],

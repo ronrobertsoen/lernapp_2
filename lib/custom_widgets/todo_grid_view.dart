@@ -10,17 +10,30 @@ class TodoGridView extends StatefulWidget {
 }
 
 class _TodoGridViewState extends State<TodoGridView> {
+  // Methode, um eine Aufgabe als erledigt zu markieren
+  void _markTodoAsDone(int index) {
+    setState(() {
+      // Entfernt die erledigte Aufgabe aus der Liste
+      widget.todoList.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
+    // Verwenden Sie ListView.builder für eine vertikale Liste
+    return ListView.builder(
       itemCount: widget.todoList.length,
-      itemBuilder: (BuildContext context, int index) {
+      itemBuilder: (context, index) {
+        var todoParts = widget.todoList[index].split(',');
+        var title = todoParts[1];
+        var description = todoParts.length > 2 ? todoParts[2] : '';
+
+        // Erstellt ein TodoTile und übergibt den Titel, die Beschreibung und einen Callback
         return TodoTile(
-            title: widget.todoList[index].split(",")[1],
-            description: widget.todoList[index].split(",")[2]);
+          title: title,
+          description: description,
+          onTodoToggle: () => _markTodoAsDone(index),
+        );
       },
     );
   }
