@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class TodoInformationPopup extends StatefulWidget {
   final TextEditingController titleController;
@@ -80,11 +80,21 @@ class _TodoInformationPopupState extends State<TodoInformationPopup> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10),
-              child: TextField(
-                controller: widget
-                    .dateController, // Verwenden Sie den neuen Controller hier
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(
+              child: GestureDetector(
+                onTap: () async {
+                  selectedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2023),
+                    lastDate: DateTime(2100),
+                  );
+                  setState(() {});
+                },
+                child: Text(
+                  selectedDate != null
+                      ? DateFormat('dd-MM-yyyy').format(selectedDate!)
+                      : 'Datum auswählen',
+                  style: const TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
