@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:intl/intl.dart';
 
 class HorizontalDayList extends StatefulWidget {
   final Function dayUpdateFunction;
-
-  const HorizontalDayList({Key? key, required this.dayUpdateFunction})
+  final DateTime startDate;
+  const HorizontalDayList(
+      {Key? key, required this.dayUpdateFunction, required this.startDate})
       : super(key: key);
 
   @override
@@ -13,7 +15,7 @@ class HorizontalDayList extends StatefulWidget {
 
 class _HorizontalDayListState extends State<HorizontalDayList> {
   //Boxen oben, mit Wochentagen drin
-  List<String> weekdays = ["MON", "DI", "MI", "DO", "FR", "SA", "SO"];
+  List<String> weekdays = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
 
   Color activeCardColor = Colors.white;
   Color inactiveCardColor = Colors.black26;
@@ -68,6 +70,8 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
         scrollDirection: Axis.horizontal, // horizontal scrollen
         itemCount: weekdays.length,
         itemBuilder: (BuildContext context, int index) {
+          DateTime buttondate = widget.startDate.add(Duration(days: index));
+          String formattedDate = DateFormat('dd.MM').format(buttondate);
           return GestureDetector(
             // verarbeitet Benutzerinteraktionen
             onTap: () {
@@ -86,7 +90,9 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
               child: Center(
                 // Text in Container (Kinderinhalt) wird zentriert
                 child: Text(
-                  weekdays[index], // Schriftgrösse & Art etc.
+                  weekdays[index] +
+                      "\n" +
+                      formattedDate, //Schriftgrösse & Art etc.
                   style: TextStyle(
                       fontSize: 18,
                       color: cardColorList[index][1],

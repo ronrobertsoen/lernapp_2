@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:todo_try/custom_widgets/horizontal_day_list.dart';
-import 'package:todo_try/custom_widgets/horizontal_date_list.dart';
 import 'package:todo_try/custom_widgets/todo_grid_view.dart';
 import 'package:todo_try/custom_widgets/todo_information_popup.dart';
 
@@ -22,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   List<String> dayDependentTodos = [];
   List<String> todoInformation = ["MON,TEST1,TEST1"];
   String weekday = "";
+  DateTime currentdate = DateTime(2022, 12, 11);
 
   @override
   void dispose() {
@@ -74,8 +74,8 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           const SizedBox(height: 15),
-          HorizontalDayList(dayUpdateFunction: changeWeekday),
-          HorizontalDateList(dayUpdateFunction: changeWeekday),
+          HorizontalDayList(
+              dayUpdateFunction: changeWeekday, startDate: currentdate),
           const SizedBox(height: 20),
           Expanded(
             child: Container(
