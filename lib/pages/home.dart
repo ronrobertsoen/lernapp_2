@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   List<String> dayDependentTodos = [];
   List<String> todoInformation = ["MON,TEST1,TEST1"];
   String weekday = "";
-  DateTime currentdate = DateTime(2022, 12, 11);
+  DateTime currentdate = DateTime(2024, 01, 08);
 
   @override
   void dispose() {
@@ -61,71 +61,104 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  int value = 0;
+  void nextweek() {
+    setState(() {
+      currentdate = currentdate.add(Duration(days: 7));
+    });
+  }
+
+  void previousweek() {
+    setState(() {
+      currentdate = currentdate.subtract(Duration(days: 7));
+    });
+    value = -7;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 111, 112, 112),
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 111, 112, 112),
-        elevation: 0.0,
-        title: const Text("LERNAPP"),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 15),
-          HorizontalDayList(
-              dayUpdateFunction: changeWeekday, startDate: currentdate),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-                boxShadow: [BoxShadow(blurRadius: 10.0)],
-              ),
-              child: TodoGridView(todoList: dayDependentTodos),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return TodoInformationPopup(
-                titleController: titleController,
-                descriptionController: descriptionController,
-                dateController: dateController, // Übergeben des Controllers
-              );
-            },
-          ).then((value) {
-            setState(() {
-              if (descriptionController.text.isEmpty ||
-                  titleController.text.isEmpty) {
-                showInSnackBar("Fach oder Beschreibung darf nicht leer sein!");
-              } else {
-                todoInformation.add(
-                    "$weekday,${titleController.text},${descriptionController.text}");
-                updateList();
-                titleController.clear();
-                descriptionController.clear();
-              }
-            });
-          });
-        },
-        splashColor: const Color.fromARGB(255, 158, 158, 158),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+        backgroundColor: const Color.fromARGB(255, 111, 112, 112),
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 111, 112, 112),
+          elevation: 0.0,
+          title: const Text("LERNAPP"),
         ),
-        backgroundColor: const Color.fromARGB(255, 158, 158, 158),
-        child: const Icon(Icons.add, size: 50),
-      ),
-    );
+        body: Column(
+          children: [
+            const SizedBox(height: 15),
+            HorizontalDayList(
+                dayUpdateFunction: changeWeekday, startDate: currentdate),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  boxShadow: [BoxShadow(blurRadius: 10.0)],
+                ),
+                child: TodoGridView(todoList: dayDependentTodos),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment
+              .spaceEvenly, // Dies sorgt dafür, dass die Buttons richtig platziert sind
+          children: [
+            FloatingActionButton(
+              onPressed: previousweek,
+              elevation: 5.0,
+              backgroundColor: const Color.fromARGB(255, 158, 158, 158),
+              child: const Icon(Icons.arrow_back, size: 35),
+            ),
+            FloatingActionButton(
+              onPressed: nextweek,
+              elevation: 5.0,
+              backgroundColor: const Color.fromARGB(255, 158, 158, 158),
+              child: const Icon(Icons.arrow_forward, size: 35),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return TodoInformationPopup(
+                      titleController: titleController,
+                      descriptionController: descriptionController,
+                      dateController:
+                          dateController, // Übergeben des Controllers
+                    );
+                  },
+                ).then((value) {
+                  setState(() {
+                    if (descriptionController.text.isEmpty ||
+                        titleController.text.isEmpty) {
+                      showInSnackBar(
+                          "Fach oder Beschreibung darf nicht leer sein!");
+                    } else {
+                      todoInformation.add(
+                          "$weekday,${titleController.text},${descriptionController.text}");
+                      updateList();
+                      titleController.clear();
+                      descriptionController.clear();
+                    }
+                  });
+                });
+              },
+              splashColor: const Color.fromARGB(255, 158, 158, 158),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+              backgroundColor: const Color.fromARGB(255, 158, 158, 158),
+              child: const Icon(Icons.add, size: 50),
+            )
+          ],
+        ));
   }
 }
