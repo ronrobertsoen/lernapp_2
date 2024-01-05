@@ -24,7 +24,7 @@ class _TodoTileState extends State<TodoTile> {
   @override
   Widget build(BuildContext context) {
     // Wenn die Aufgabe erledigt ist, wird nichts gerendert
-    if (isDone) return SizedBox();
+    if (isDone) return const SizedBox();
 
     // Ansonsten wird das TodoTile normal gerendert
     return ListTile(

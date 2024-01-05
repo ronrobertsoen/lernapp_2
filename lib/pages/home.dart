@@ -1,9 +1,19 @@
 //import 'dart:ui';        glaub unnötig, das alles im flutter enthalten ist
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_try/custom_widgets/horizontal_day_list.dart';
 import 'package:todo_try/custom_widgets/todo_grid_view.dart';
 import 'package:todo_try/custom_widgets/todo_information_popup.dart';
+
+class Lernziel {
+  String titel;
+  String beschreibung;
+  DateTime datum;
+
+  Lernziel(
+      {required this.titel, required this.beschreibung, required this.datum});
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,17 +28,16 @@ class _HomePageState extends State<HomePage> {
   TextEditingController dateController =
       TextEditingController(); // Neuer Controller für das Datum
 
-  List<String> dayDependentTodos = [];
-  List<String> todoInformation = ["MON,TEST1,TEST1"];
-  String weekday = "";
-  DateTime currentdate = DateTime(2024, 01, 08);
+  List<Lernziel> todoInformation = [];
+  List<Lernziel> dayDependentTodos = [];
+  int weekday = 0;
+  DateTime currentdate = DateTime.now();
 
   @override
-  void dispose() {
-    titleController.dispose();
-    descriptionController.dispose();
-    dateController.dispose(); // Entsorgen des Controllers
-    super.dispose();
+  void initState() {
+    super.initState();
+    // Setzt den aktuellen Wochentag beim Start der App
+    weekday = currentdate.weekday - 1;
   }
 
   void showInSnackBar(String value) {
@@ -45,34 +54,44 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void changeWeekday(String newDay) {
+  void changeWeekday(int newDay) {
     setState(() {
       weekday = newDay;
     });
     updateList();
   }
 
+  void addLernziel(DateTime chosenDate, String title, String description) {
+    setState(() {
+      todoInformation.add(Lernziel(
+        titel: title,
+        beschreibung: description,
+        datum: chosenDate,
+      ));
+      updateList();
+    });
+  }
+
   void updateList() {
     dayDependentTodos.clear();
-    for (var todoInfo in todoInformation) {
-      if (todoInfo.split(",")[0] == weekday) {
-        dayDependentTodos.add(todoInfo);
+    for (Lernziel lernziel in todoInformation) {
+      (DateFormat('EEEE', 'de_DE').format(lernziel.datum));
+      if (lernziel.datum.weekday - 1 == weekday) {
+        dayDependentTodos.add(lernziel);
       }
     }
   }
 
-  int value = 0;
   void nextweek() {
     setState(() {
-      currentdate = currentdate.add(Duration(days: 7));
+      currentdate = currentdate.add(const Duration(days: 7));
     });
   }
 
   void previousweek() {
     setState(() {
-      currentdate = currentdate.subtract(Duration(days: 7));
+      currentdate = currentdate.subtract(const Duration(days: 7));
     });
-    value = -7;
   }
 
   @override
@@ -125,30 +144,28 @@ class _HomePageState extends State<HomePage> {
             ),
             FloatingActionButton(
               onPressed: () {
-                showDialog(
+                showDialog<Map<String, dynamic>>(
                   context: context,
                   builder: (context) {
                     return TodoInformationPopup(
                       titleController: titleController,
                       descriptionController: descriptionController,
-                      dateController:
-                          dateController, // Übergeben des Controllers
                     );
                   },
-                ).then((value) {
-                  setState(() {
-                    if (descriptionController.text.isEmpty ||
-                        titleController.text.isEmpty) {
-                      showInSnackBar(
-                          "Fach oder Beschreibung darf nicht leer sein!");
-                    } else {
-                      todoInformation.add(
-                          "$weekday,${titleController.text},${descriptionController.text}");
-                      updateList();
-                      titleController.clear();
-                      descriptionController.clear();
-                    }
-                  });
+                ).then((result) {
+                  // 'selectedDate' empfängt das Datum vom Popup
+                  if (result != null) {
+                    DateTime selectedDate = result['selectedDate'];
+                    String title = result['title'];
+                    String description = result['description'];
+
+                    addLernziel(selectedDate, title, description);
+                    titleController.clear();
+                    descriptionController.clear();
+                  } else {
+                    showInSnackBar(
+                        "Bitte füllen Sie alle Felder aus und wählen Sie ein Datum.");
+                  }
                 });
               },
               splashColor: const Color.fromARGB(255, 158, 158, 158),
@@ -157,7 +174,7 @@ class _HomePageState extends State<HomePage> {
               ),
               backgroundColor: const Color.fromARGB(255, 158, 158, 158),
               child: const Icon(Icons.add, size: 50),
-            )
+            ),
           ],
         ));
   }

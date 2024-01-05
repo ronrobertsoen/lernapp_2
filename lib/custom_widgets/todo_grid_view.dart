@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_try/custom_widgets/todo_tile.dart';
+import '../pages/home.dart';
 
-// ignore: must_be_immutable
 class TodoGridView extends StatefulWidget {
-  final List<String> todoList;
+  final List<Lernziel> todoList;
   const TodoGridView({Key? key, required this.todoList}) : super(key: key);
 
   @override
@@ -25,14 +26,13 @@ class _TodoGridViewState extends State<TodoGridView> {
     return ListView.builder(
       itemCount: widget.todoList.length,
       itemBuilder: (context, index) {
-        var todoParts = widget.todoList[index].split(',');
-        var title = todoParts[1];
-        var description = todoParts.length > 2 ? todoParts[2] : '';
+        Lernziel lernziel = widget.todoList[index];
+        String formattedDate = DateFormat('dd.MM.yyyy').format(lernziel.datum);
 
         // Erstellt ein TodoTile und übergibt den Titel, die Beschreibung und einen Callback
         return TodoTile(
-          title: title,
-          description: description,
+          title: lernziel.titel,
+          description: "${lernziel.beschreibung} (Fällig am: $formattedDate)",
           onTodoToggle: () => _markTodoAsDone(index),
         );
       },

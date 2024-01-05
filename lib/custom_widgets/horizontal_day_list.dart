@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 
 class HorizontalDayList extends StatefulWidget {
-  final Function dayUpdateFunction;
+  final Function(int) dayUpdateFunction;
   final DateTime startDate;
   const HorizontalDayList(
       {Key? key, required this.dayUpdateFunction, required this.startDate})
@@ -16,6 +16,7 @@ class HorizontalDayList extends StatefulWidget {
 class _HorizontalDayListState extends State<HorizontalDayList> {
   //Boxen oben, mit Wochentagen drin
   List<String> weekdays = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
+  DateTime monday = DateTime.now();
 
   Color activeCardColor = Colors.white;
   Color inactiveCardColor = Colors.black26;
@@ -33,8 +34,6 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
     [Colors.black26, Colors.white],
   ];
 
-  late DateTime date;
-
   void updateDayColor(int index) {
     setState(() {
       for (int i = 0; i < cardColorList.length; i++) {
@@ -51,11 +50,18 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      date =
-          DateTime.now(); // PostFrameCallback enthält aktuelles Datum & Uhrzeit
-      widget.dayUpdateFunction(
-          weekdays[date.weekday - 1]); // zeigt an welcher Wochentag ist
-      updateDayColor(date.weekday - 1); // Passt die Farbe an
+      // Sicherstellen, dass die startDate tatsächlich Montag ist.
+      // Wenn startDate nicht Montag ist, finden Sie den letzten Montag.
+      monday = widget.startDate
+          .subtract(Duration(days: widget.startDate.weekday - 1));
+
+      // Die Farbe des aktuellen Tages aktualisieren.
+      int todayIndex = DateTime.now().difference(monday).inDays;
+      if (todayIndex >= 0 && todayIndex < 7) {
+        // Wenn der aktuelle Tag innerhalb der Woche liegt
+        updateDayColor(todayIndex);
+        widget.dayUpdateFunction(todayIndex);
+      }
     });
   }
 
@@ -70,13 +76,13 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
         scrollDirection: Axis.horizontal, // horizontal scrollen
         itemCount: weekdays.length,
         itemBuilder: (BuildContext context, int index) {
-          DateTime buttondate = widget.startDate.add(Duration(days: index));
+          DateTime buttondate = monday.add(Duration(days: index));
           String formattedDate = DateFormat('dd.MM').format(buttondate);
           return GestureDetector(
             // verarbeitet Benutzerinteraktionen
             onTap: () {
               updateDayColor(index);
-              widget.dayUpdateFunction(weekdays[index]);
+              widget.dayUpdateFunction(index);
             },
             child: Container(
               // Aussehen der Karte
@@ -94,7 +100,7 @@ class _HorizontalDayListState extends State<HorizontalDayList> {
                       "\n" +
                       formattedDate, //Schriftgrösse & Art etc.
                   style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       color: cardColorList[index][1],
                       fontWeight: FontWeight.bold),
                 ),
