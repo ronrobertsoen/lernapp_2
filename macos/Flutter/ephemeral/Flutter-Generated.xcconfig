@@ -1,8 +1,8 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/isa/flutter
-FLUTTER_APPLICATION_PATH=/Users/isa/lernapp_2
+FLUTTER_ROOT=/Users/robertospelt/flutter
+FLUTTER_APPLICATION_PATH=/Users/robertospelt/lernapp_2/lernapp_2
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=/Users/isa/lernapp_2/lib/main.dart
+FLUTTER_TARGET=/Users/robertospelt/lernapp_2/lernapp_2/lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
@@ -10,4 +10,4 @@ DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/isa/lernapp_2/.dart_tool/package_config.json
+PACKAGE_CONFIG=/Users/robertospelt/lernapp_2/lernapp_2/.dart_tool/package_config.json
