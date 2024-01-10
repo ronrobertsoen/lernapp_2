@@ -1,18 +1,34 @@
-//import 'dart:ui';        glaub unnötig, das alles im flutter enthalten ist
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:todo_try/custom_widgets/horizontal_day_list.dart';
 import 'package:todo_try/custom_widgets/todo_grid_view.dart';
 import 'package:todo_try/custom_widgets/todo_information_popup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // Für die JSON-Kodierung
 
 class Lernziel {
   String titel;
   String beschreibung;
   DateTime datum;
 
-  Lernziel(
-      {required this.titel, required this.beschreibung, required this.datum});
+  Lernziel({
+    required this.titel,
+    required this.beschreibung,
+    required this.datum,
+  });
+
+  factory Lernziel.fromJson(Map<String, dynamic> json) {
+    return Lernziel(
+      titel: json['titel'],
+      beschreibung: json['beschreibung'],
+      datum: DateTime.parse(json['datum']),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'titel': titel,
+        'beschreibung': beschreibung,
+        'datum': datum.toIso8601String(),
+      };
 }
 
 class HomePage extends StatefulWidget {
@@ -30,14 +46,34 @@ class _HomePageState extends State<HomePage> {
 
   List<Lernziel> todoInformation = [];
   List<Lernziel> dayDependentTodos = [];
-  int weekday = 0;
   DateTime currentdate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    // Setzt den aktuellen Wochentag beim Start der App
-    weekday = currentdate.weekday - 1;
+    loadLernziele();
+  }
+
+  // Laden der gespeicherten Lernziele
+  void loadLernziele() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? lernzieleString = prefs.getString('lernziele');
+    if (lernzieleString != null) {
+      final List<Lernziel> lernziele = (json.decode(lernzieleString) as List)
+          .map((item) => Lernziel.fromJson(item))
+          .toList();
+      setState(() {
+        todoInformation = lernziele;
+        updateList();
+      });
+    }
+  }
+
+  // Speichern der Lernziele
+  void saveLernziele() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String lernzieleString = json.encode(todoInformation);
+    await prefs.setString('lernziele', lernzieleString);
   }
 
   void showInSnackBar(String value) {
@@ -54,11 +90,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void changeWeekday(int newDay) {
+  void changeWeekday(DateTime newdate) {
     setState(() {
-      weekday = newDay;
+      currentdate = newdate;
+      updateList();
     });
-    updateList();
   }
 
   void addLernziel(DateTime chosenDate, String title, String description) {
@@ -75,8 +111,7 @@ class _HomePageState extends State<HomePage> {
   void updateList() {
     dayDependentTodos.clear();
     for (Lernziel lernziel in todoInformation) {
-      (DateFormat('EEEE', 'de_DE').format(lernziel.datum));
-      if (lernziel.datum.weekday - 1 == weekday) {
+      if (DateUtils.isSameDay(lernziel.datum, currentdate)) {
         dayDependentTodos.add(lernziel);
       }
     }
@@ -85,12 +120,14 @@ class _HomePageState extends State<HomePage> {
   void nextweek() {
     setState(() {
       currentdate = currentdate.add(const Duration(days: 7));
+      updateList();
     });
   }
 
   void previousweek() {
     setState(() {
       currentdate = currentdate.subtract(const Duration(days: 7));
+      updateList();
     });
   }
 
@@ -108,7 +145,9 @@ class _HomePageState extends State<HomePage> {
           children: [
             const SizedBox(height: 15),
             HorizontalDayList(
-                dayUpdateFunction: changeWeekday, startDate: currentdate),
+//                key: dayListKey,
+                dayUpdateFunction: changeWeekday,
+                startDate: currentdate),
             const SizedBox(height: 20),
             Expanded(
               child: Container(
@@ -160,6 +199,7 @@ class _HomePageState extends State<HomePage> {
                     String description = result['description'];
 
                     addLernziel(selectedDate, title, description);
+                    saveLernziele();
                     titleController.clear();
                     descriptionController.clear();
                   } else {

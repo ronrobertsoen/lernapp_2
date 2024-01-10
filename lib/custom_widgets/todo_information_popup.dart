@@ -12,7 +12,7 @@ class TodoInformationPopup extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TodoInformationPopupState createState() => _TodoInformationPopupState();
+  State<TodoInformationPopup> createState() => _TodoInformationPopupState();
 }
 
 class _TodoInformationPopupState extends State<TodoInformationPopup> {
