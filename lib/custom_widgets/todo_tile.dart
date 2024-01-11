@@ -1,6 +1,4 @@
-//import 'dart:ffi';                           // kann nun auf Funktionen & Daten aus anderen Programmiersprachen zugegriffen werden
 import 'package:flutter/material.dart'; // Klassen & Funktionen aus Flutter Biblio
-//import 'package:intl/intl.dart';                wichtig für Kalender einbettung
 
 class TodoTile extends StatefulWidget {
   final String title;
