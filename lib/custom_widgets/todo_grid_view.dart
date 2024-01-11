@@ -22,7 +22,7 @@ class _TodoGridViewState extends State<TodoGridView> {
 
   @override
   Widget build(BuildContext context) {
-    // Verwenden Sie ListView.builder für eine vertikale Liste
+    // ListView.builder wird für eine vertikale Liste verwendet
     return ListView.builder(
       itemCount: widget.todoList.length,
       itemBuilder: (context, index) {
