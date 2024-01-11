@@ -12,6 +12,7 @@ class HorizontalDayList extends StatelessWidget {
   final List<String> weekdays = ["MO", "DI", "MI", "DO", "FR", "SA", "SO"];
 
   Color getCardColor(DateTime day) {
+    // Heutiges Datum wird weiss anderes schwarz
     if (DateUtils.isSameDay(day, startDate)) {
       return Colors.white;
     } else {
@@ -20,6 +21,7 @@ class HorizontalDayList extends StatelessWidget {
   }
 
   Color getTextColor(DateTime day) {
+    // gleich wie oben einfach der Text
     if (DateUtils.isSameDay(day, startDate)) {
       return Colors.black;
     } else {
@@ -29,8 +31,8 @@ class HorizontalDayList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime monday =
-        startDate.subtract(Duration(days: startDate.weekday - 1)); //Ausrechnung
+    DateTime monday = startDate.subtract(
+        Duration(days: startDate.weekday - 1)); //Ausrechnung welcher Tag
 
     // definiert Widget, für die horizontale List von Weekdays
     return SizedBox(
