@@ -23,7 +23,7 @@ class TodoApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      //ermöglicht mehrere Lokale, heisst die Anwendung ist in der Lage angegebene Sprache anzuzeigen und formatieren
+      //ermöglicht mehrere Lokale, heisst die Anwendung ist in der Lage angegebene Sprache anzuzeigen und formatieren (Für Kalender Schweiz)
       supportedLocales: [
         Locale('de'), // Deutsch
         Locale('en'), // Englisch

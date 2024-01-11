@@ -11,7 +11,7 @@ class Lernziel {
   String beschreibung;
   DateTime datum;
 
-// Konstruktor für die Klasse Lernziel
+// Konstruktor um ein Lernziel zu erstellen.
   Lernziel({
     required this.titel,
     required this.beschreibung,
@@ -33,7 +33,7 @@ class Lernziel {
       };
 }
 
-// Definition der Klasse HomePage
+// Definition der Klasse HomePage, Das Hauptseiten-Widget der App
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -41,25 +41,26 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-// Der Zustand für HomePage
+// Der Zustand, der mit dem HomePage-Widget verbunden ist.
 class _HomePageState extends State<HomePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController dateController =
-      TextEditingController(); // Neuer Controller für das Datum
+      TextEditingController(); // Für die Datumeingabe.
 
 // Listen zur Speicherung der Lernziele
-  List<Lernziel> todoInformation = [];
-  List<Lernziel> dayDependentTodos = [];
-  DateTime currentdate = DateTime.now();
+  List<Lernziel> todoInformation = []; // Alle Lernziele.
+  List<Lernziel> dayDependentTodos =
+      []; // Lernziele, gefiltert nach dem ausgewählten Tag.
+  DateTime currentdate = DateTime.now(); // Das aktuell ausgewählte Datum.
 
   @override
   void initState() {
     super.initState();
-    loadLernziele();
+    loadLernziele(); // Lade Lernziele, wenn die App startet.
   }
 
-  // Laden der gespeicherten Lernziele
+  // Lädt gespeicherte Lernziele aus dem lokalen Speicher.
   void loadLernziele() async {
     final prefs = await SharedPreferences.getInstance();
     final String? lernzieleString = prefs.getString('lernziele');
@@ -69,12 +70,12 @@ class _HomePageState extends State<HomePage> {
           .toList();
       setState(() {
         todoInformation = lernziele;
-        updateList();
+        updateList(); // Aktualisiere die Liste, um die geladenen Lernziele anzuzeigen.
       });
     }
   }
 
-  // Speichern der Lernziele
+  // Speichert die aktuelle Liste der Lernziele im lokalen Speicher.
   void saveLernziele() async {
     final prefs = await SharedPreferences.getInstance();
     final String lernzieleString = json.encode(todoInformation);
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-// Funktion zum Ändern des aktuellen Datums
+// Aktualisiert den ausgewählten Tag und filtert die Lernziele entsprechend.
   void changeWeekday(DateTime newdate) {
     setState(() {
       currentdate = newdate;
@@ -104,7 +105,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-// Funktion zum Hinzufügen eines neuen Lernziels
+// Fügt ein neues Lernziel hinzu und speichert es.
   void addLernziel(DateTime chosenDate, String title, String description) {
     setState(() {
       todoInformation.add(Lernziel(
@@ -112,7 +113,7 @@ class _HomePageState extends State<HomePage> {
         beschreibung: description,
         datum: chosenDate,
       ));
-      updateList();
+      updateList(); //Aktualisiere die Liste, um das neue Lernziel anzuzeigen.
     });
   }
 
@@ -126,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Funktion zum Navigieren für die nächste Woche
+  // Geht zur nächsten Woche über und aktualisiert die Liste.
   void nextweek() {
     setState(() {
       currentdate = currentdate.add(const Duration(days: 7));
@@ -134,7 +135,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-// Funktion zum Navigieren für die Woche davor
+// Geht zur vorherigen Woche zurück und aktualisiert die Liste.
   void previousweek() {
     setState(() {
       currentdate = currentdate.subtract(const Duration(days: 7));
@@ -144,7 +145,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Erstellt Haupt-UI mit Scaffold Widget
+    // Erstellt Haupt-UI mit Scaffold Widget, Aufbau der Benutzeroberfläche der App.
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 111, 112, 112),
         appBar: AppBar(
@@ -158,11 +159,12 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 15),
             //Widget zur Anzeige einer horizontalen Liste von Tagen
             HorizontalDayList(
-//    löschen?            key: dayListKey,
                 dayUpdateFunction:
                     changeWeekday, // Funktion wird aufgerufen, wenn Tag ausgewählt wird
                 startDate: currentdate),
-            const SizedBox(height: 20),
+            const SizedBox(
+                height:
+                    20), // Erweiterter Container, um die Liste der Lernziele anzuzeigen.
             Expanded(
               child: Container(
                 // cntainer für Darstellung der Lernziele
@@ -175,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                     // macht Ecken oben abgerundet
                   ),
                   boxShadow: [BoxShadow(blurRadius: 10.0)],
-                ),
+                ), // Widget, das eine Gitteransicht der Lernziele anzeigt.
                 child: TodoGridView(
                     todoList:
                         dayDependentTodos), // Übergibt die tagesabhängigen Lernziele
@@ -184,6 +186,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         floatingActionButton: Row(
+          //Floating Action Button-Reihe, um zur nächsten/vorherigen Woche zu navigieren oder ein neues Lernziel hinzuzufügen.
           mainAxisAlignment: MainAxisAlignment
               .spaceEvenly, // Dies sorgt dafür, dass die Buttons richtig platziert sind
           children: [
@@ -213,20 +216,21 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ).then((result) {
-                  // 'selectedDate' empfängt das Datum vom Popup
+                  // Verarbeitet die Eingabe aus dem Dialog.
                   if (result != null) {
                     // Wenn das Ergebnis nicht null ist, wird ein neues Lernziel hinzugefügt
                     DateTime selectedDate = result['selectedDate'];
                     String title = result['title'];
                     String description = result['description'];
 
-                    addLernziel(selectedDate, title, description);
+                    addLernziel(selectedDate, title,
+                        description); // Fügt das neue Lernziel hinzu und speichert es.
                     saveLernziele();
                     // Leert die Textfeld-Controller
                     titleController.clear();
                     descriptionController.clear();
                   } else {
-                    // Zeigt eine Nachricht, wenn das Popup-Ergebnis null ist
+                    // Zeigt eine Nachricht, wenn das Popup-Ergebnis null ist, wenn nicht alle Felder ausgefüllt wurden.
                     showInSnackBar(
                         "Bitte füllen Sie alle Felder aus und wählen Sie ein Datum.");
                   }
